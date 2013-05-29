@@ -1,6 +1,8 @@
 LSU Quick Edit
 ==============
 
+Quick Edit is a simple Moodle Gradebook plugin which allows teahers to do some awesome things.
+
 Quick Edit allows for editing of multiple grades for a single grade item and all grade items for a single user.
 
 It allows the instructor to insert an arbitrary value ofr all students for a single item (incredibly useful) or all items for a single student (less useful).

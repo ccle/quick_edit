@@ -19,7 +19,7 @@ class quick_edit_grade extends quick_edit_tablelike
         return self::$allow_categories;
     }
 
-    public static function filter($item) {
+    public function filter($item) {
         return (
             self::allow_categories() or !(
                 $item->is_course_item() or $item->is_category_item()

@@ -62,7 +62,7 @@ class quick_edit_anonymous extends quick_edit_tablelike
         return $line;
     }
 
-    public function filter($item) {
+    public static function filter($item) {
         if (!self::is_supported()) {
             return true;
         }

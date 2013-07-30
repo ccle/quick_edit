@@ -32,6 +32,10 @@ M.gradereport_quick_edit.init = function(Y) {
             Y.all('input[name$=' + interest + ']').filter('input[type=text]').each(function(text) {
                 text.getDOMNode().disabled = !checked;
             });
+            // deal with scales that are not text... UCSB
+            Y.all('select[name$=' + interest + ']').each(function(select) {
+                select.getDOMNode().disabled = !checked;
+            });
         });
     });
 };

@@ -11,7 +11,11 @@ class quick_edit_anonymous extends quick_edit_tablelike
         global $COURSE;
 
         if (is_null(self::$supported)) {
-            self::$supported = grade_anonymous::is_supported($COURSE);
+            if (class_exists('grade_anonymous')) {
+                self::$supported = grade_anonymous::is_supported($COURSE);
+            } else {
+                self::$supported = false;
+            }
         }
 
         return self::$supported;

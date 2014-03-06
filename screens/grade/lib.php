@@ -118,8 +118,17 @@ class quick_edit_grade extends quick_edit_tablelike
 
         $grade = $this->fetch_grade_or_default($this->item, $item->id);
 
-        $fullname = fullname($item);
+        // UCSB add lock icon indicator
+        $lockicon = '';
 
+        // CODE to make steve happy for his simple mind
+	$locked_grade = $locked_grade_item = 0;
+        if ( ! empty($grade->locked) )  $locked_grade = 1;
+        if ( ! empty($grade->grade_item->locked) ) $locked_grade_item = 1;
+        if ( $locked_grade || $locked_grade_item )  // check both grade and grade item
+            $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
+
+        $fullname = $lockicon . fullname($item);
         $item->imagealt = $fullname;
 
         $line = array(

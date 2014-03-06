@@ -17,3 +17,7 @@
 #page-grade-report-quick_edit-index .quick_edit_buttons {
     padding: 10px 0;
 }
+
+#page-grade-report-quick_edit-index table.generaltable .cell {
+   vertical-align: middle;
+}

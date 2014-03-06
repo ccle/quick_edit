@@ -62,9 +62,17 @@ class quick_edit_user extends quick_edit_tablelike implements selectable_items {
         global $OUTPUT;
 
         $grade = $this->fetch_grade_or_default($item, $this->item->id);
+        $lockicon = '';
+
+        // UCSB add lock icon indicator
+        $locked_grade = $locked_grade_item = 0;
+        if ( ! empty($grade->locked) )  $locked_grade = 1;
+        if ( ! empty($grade->grade_item->locked) ) $locked_grade_item = 1;
+        if ( $locked_grade || $locked_grade_item )  // check both grade and grade item
+             $lockicon =  $OUTPUT->pix_icon('t/locked', 'grade is locked');
 
         $line = array(
-            $this->format_icon($item),
+            $this->format_icon($item) . $lockicon,
             $this->format_link('grade', $item->id, $item->get_name()),
             $this->category($item),
             $this->factory()->create('range')->format($item)
@@ -75,7 +83,6 @@ class quick_edit_user extends quick_edit_tablelike implements selectable_items {
 
     private function format_icon($item) {
         $element = array('type' => 'item', 'object' => $item);
-
         return $this->structure->get_element_icon($element);
     }
 

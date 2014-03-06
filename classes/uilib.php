@@ -89,7 +89,6 @@ class quick_edit_text_attribute extends quick_edit_ui_element {
         if (!empty($this->tabindex)) {
             $attributes['tabindex'] = $this->tabindex;
         }
-
         if ($this->is_disabled) {
             $attributes['disabled'] = 'DISABLED';
         }
@@ -100,8 +99,8 @@ class quick_edit_text_attribute extends quick_edit_ui_element {
             'value' => $this->value
         );
 
-        return (
-            html_writer::empty_tag('input', $attributes) .
+        return ( 
+            html_writer::empty_tag('input', $attributes) . 
             html_writer::empty_tag('input', $hidden)
         );
     }
@@ -111,9 +110,11 @@ class quick_edit_checkbox_attribute extends quick_edit_ui_element {
     var $is_checked;
     var $tabindex;
 
-    function __construct($name, $is_checked = false, $tabindex = null) {
+    // UCSB 2014-02-28 - add $locked to disable override checkbox when grade is locked 
+    function __construct($name, $is_checked = false, $tabindex = null, $locked=0) {
         $this->is_checked = $is_checked;
         $this->tabindex = $tabindex;
+        $this->locked = $locked;
         parent::__construct($name, 1);
     }
 
@@ -122,11 +123,17 @@ class quick_edit_checkbox_attribute extends quick_edit_ui_element {
     }
 
     function html() {
+
         $attributes = array(
             'type' => 'checkbox',
             'name' => $this->name,
             'value' => 1
         );
+
+        // UCSB fixed user should not be able to override locked grade
+        if ( $this->locked) {
+            $attributes['disabled'] = 'DISABLED';
+        }
 
         $alt = array(
             'type' => 'hidden',
@@ -282,7 +289,6 @@ class quick_edit_bulk_insert_ui extends quick_edit_ui_element {
 
         $label = html_writer::tag('label', $_s('for'));
         $text = new quick_edit_text_attribute($this->insertname, "0");
-
         return implode(' ', array($apply, $text->html(), $label, $select));
     }
 
@@ -316,10 +322,19 @@ class quick_edit_finalgrade_ui extends quick_edit_grade_attribute_format impleme
     }
 
     function is_disabled() {
-        return (
-            $this->grade->grade_item->is_overridable_item() and
-            !$this->grade->is_overridden()
-        );
+        $locked = 0;
+        $gradeitemlocked = 0;
+        $overridden = 0;
+// UCSB - 2.24.2014 
+// disable editing if grade item or grade score is locked
+// if any of these items are set,  then we will disable editing
+// at some point, we might want to show the reason for the lock
+// this code could be simplified, but its more readable for steve's little mind
+        if (!empty($this->grade->locked))  $locked = 1;
+        if (!empty($this->grade->grade_item->locked))  $gradeitemlocked = 1;
+        if ($this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden()) $overridden = 1;
+        //$overridden = $this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden();
+        return ($locked || $gradeitemlocked || $overridden);
     }
 
     function determine_format() {
@@ -402,10 +417,18 @@ class quick_edit_feedback_ui extends quick_edit_grade_attribute_format implement
     }
 
     function is_disabled() {
-        return (
-            $this->grade->grade_item->is_overridable_item_feedback() and
-            !$this->grade->is_overridden()
-        );
+        $locked = 0;
+        $gradeitemlocked = 0;
+        $overridden = 0;
+// UCSB - 2.24.2014 
+// disable editing if grade item or grade score is locked
+// if any of these items are set,  then we will disable editing
+// at some point, we might want to show the reason for the lock
+// this code could be simplified, but its more readable for steve's little mind
+        if (!empty($this->grade->locked))  $locked = 1;
+        if (!empty($this->grade->grade_item->locked))  $gradeitemlocked = 1;
+        if ($this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden()) $overridden = 1;
+        return ($locked || $gradeitemlocked || $overridden);
     }
 
     function determine_format() {
@@ -434,21 +457,31 @@ class quick_edit_feedback_ui extends quick_edit_grade_attribute_format implement
     }
 }
 
-class quick_edit_override_ui extends quick_edit_grade_attribute_format implements be_checked {
+// UCSB 2014-02-28 implement be_disabled to disable checkbox if grade/gradeitem is locked
+class quick_edit_override_ui extends quick_edit_grade_attribute_format implements be_checked, be_disabled {
     var $name = 'override';
 
     function is_checked() {
         return $this->grade->is_overridden();
     }
 
+    function is_disabled() {
+        $locked_grade =  $locked_grade_item = 0; 
+        if ( ! empty($this->grade->locked) )  $locked_grade = 1;
+        if ( ! empty($this->grade->grade_item->locked) ) $locked_grade_item = 1;
+        return ($locked_grade || $locked_grade_item);
+    }
+
     function determine_format() {
         if (!$this->grade->grade_item->is_overridable_item()) {
             return new quick_edit_empty_element();
         }
-
+       // UCSB 2014-02-28: add param is_disabled to disable override checkbox if grade is locked 
         return new quick_edit_checkbox_attribute(
             $this->get_name(),
-            $this->is_checked()
+            $this->is_checked(),
+            null,
+            $this->is_disabled()
         );
     }
 

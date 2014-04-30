@@ -311,7 +311,7 @@ class quick_edit_finalgrade_ui extends quick_edit_grade_attribute_format impleme
 
     function get_value() {
         // Manual item raw grade support
-        $val = $this->grade->grade_item->is_manual_item() && $this->grade->rawgrade ?
+        $val = $this->grade->grade_item->is_manual_item() && (!is_null($this->grade->rawgrade)) ?
             $this->grade->rawgrade : $this->grade->finalgrade;
 
         if ($this->grade->grade_item->scaleid) {

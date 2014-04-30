@@ -52,7 +52,7 @@ if (!in_array($itemtype, grade_report_quick_edit::valid_screens())) {
 
 require_login($course);
 
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 
 // This is the normal requirements
 require_capability('gradereport/quick_edit:view', $context);

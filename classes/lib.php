@@ -34,7 +34,7 @@ abstract class quick_edit_screen {
         $this->itemid = $itemid;
         $this->groupid = $groupid;
 
-        $this->context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+        $this->context = context_course::instance($this->courseid);
         $this->course = $DB->get_record('course', array('id' => $courseid));
 
         $this->page = optional_param('page', 0, PARAM_INT);

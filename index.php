@@ -124,6 +124,14 @@ if (!empty($warnings)) {
         echo $OUTPUT->notification($warning);
     }
 }
+// START UCLA MOD: CCLE-4293 - Display a Message when a User Clicks "Turn editing on"
+// Warn if user is in quick editing a user or editing a grade item that allows
+// overrides.
+else if ($itemtype == 'user' || ($itemtype == 'grade' &&
+        in_array('override', $report->screen->original_definition()))) {
+    echo $OUTPUT->notification(get_string('overridewarning', 'local_ucla'), 'notifyproblem');
+}
+// END UCLA MOD: CCLE-4293
 
 echo $report->output();
 

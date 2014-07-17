@@ -23,6 +23,7 @@ class anonymous_quick_edit_finalgrade extends quick_edit_finalgrade_ui {
 
     function set($value) {
         // Swap grade_items
+	$mainuserfields = user_picture::fields();
         $moodle_grade_item = $this->grade->load_grade_item();
 
         $this->grade->grade_item = $this->grade->load_item();
@@ -36,10 +37,15 @@ class anonymous_quick_edit_finalgrade extends quick_edit_finalgrade_ui {
             global $DB;
 
             $params = array('id' => $this->grade->userid);
-            $user = $DB->get_record('user', $params, 'id, firstname, lastname');
+            $user = $DB->get_record('user', $params, $mainuserfields);
 
             $number = $this->grade->anonymous_number();
-            $msg = preg_replace('/' . fullname($user) . '/', $number, $msg);
+            if (isset($user->alternatename)) {
+                $displayname = $user->alternatename . ' \(' . $user->firstname . '\) ' . $user->lastname;
+            } else {
+                $displayname = fullname($user);
+            }
+            $msg = preg_replace('/' . $displayname . '/', $number, $msg);
         }
 
         return $msg;
@@ -76,7 +82,6 @@ class anonymous_quick_edit_adjust_value extends quick_edit_finalgrade_ui {
 
     public function set($value) {
         global $DB;
-
         $bounded = $this->grade->bound_adjust_value($value);
 
         $code = '';
@@ -89,10 +94,14 @@ class anonymous_quick_edit_adjust_value extends quick_edit_finalgrade_ui {
         // Diff checker will fail on screen
         if ($code) {
             $params = array('id' => $this->grade->userid);
-            $user = $DB->get_record('user', $params, 'id, firstname, lastname');
+            $user = $DB->get_record('user', $params, 'id, firstname, alternatename, lastname');
 
             $obj = new stdClass;
-            $obj->username = fullname($user);
+            if (isset($user->alternatename)) {
+                $obj->username = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
+            } else {
+                $obj->username = $user->firstname . ' ' . $user->lastname;
+            }
             $obj->itemname = $this->grade->load_item()->get_name();
             $obj->boundary = $this->grade->load_item()->adjust_boundary();
             $code = get_string($code, 'grades', $obj) . ' ';

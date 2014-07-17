@@ -58,7 +58,7 @@ class quick_edit_anonymous extends quick_edit_tablelike
     public function additional_headers($line) {
         if ($this->item->is_completed()) {
             array_unshift($line, '');
-            $line[1] = get_string('firstname') . ' / ' . get_string('lastname');
+            $line[1] = get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname');
             $line[] = get_string('anonymousadjusts', 'grades');
             $line[] = $this->make_toggle_links('exclude');
         }
@@ -85,6 +85,8 @@ class quick_edit_anonymous extends quick_edit_tablelike
 
         $this->item = grade_anonymous::fetch(array('itemid' => $this->itemid));
 
+        $mainuserfields = user_picture::fields('u', array('id'), 'userid');
+
         $this->students = get_role_users($roleids, $this->context, false, '',
             'u.lastname, u.firstname', null, $this->groupid);
 
@@ -110,7 +112,11 @@ class quick_edit_anonymous extends quick_edit_tablelike
         $grade = $this->fetch_grade_or_default($this->item, $user->id);
 
         if ($this->item->is_completed()) {
-            $user->imagealt = fullname($user);
+            if (isset($user->alternatename)) {
+                $user->imagealt = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
+            } else {
+                $user->imagealt = $user->firstname . ' ' . $user->lastname;
+            }
             $line = array(
                 $OUTPUT->user_picture($user),
                 $this->format_link('user', $user->id, $user->imagealt)

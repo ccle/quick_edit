@@ -311,7 +311,7 @@ class quick_edit_finalgrade_ui extends quick_edit_grade_attribute_format impleme
 
     function get_value() {
         // Manual item raw grade support
-        $val = $this->grade->grade_item->is_manual_item() ?
+        $val = $this->grade->grade_item->is_manual_item() && (!is_null($this->grade->rawgrade)) ?
             $this->grade->rawgrade : $this->grade->finalgrade;
 
         if ($this->grade->grade_item->scaleid) {
@@ -395,9 +395,13 @@ class quick_edit_finalgrade_ui extends quick_edit_grade_attribute_format impleme
         }
 
         if ($errorstr) {
-            $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
+            $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, alternatename, lastname');
             $gradestr = new stdClass;
-            $gradestr->username = fullname($user);
+            if (isset($user->alternatename)) {
+                $gradestr->username = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
+            } else {
+                $gradestr->username = $user->firstname . ' ' . $user->lastname;
+            }
             $gradestr->itemname = $this->grade->grade_item->get_name();
 
             $errorstr = get_string($errorstr, 'grades', $gradestr);

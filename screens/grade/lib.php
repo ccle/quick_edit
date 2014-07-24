@@ -32,7 +32,13 @@ class quick_edit_grade extends quick_edit_tablelike
     }
 
     public function options() {
-        return array_map(function($user) { return fullname($user); }, $this->items);
+        return array_map(function($user) { 
+            if (isset($user->alternatename)) {
+                return $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
+            } else {
+                return fullname($user);
+            } 
+        }, $this->items); 
     }
 
     public function item_type() {
@@ -128,7 +134,12 @@ class quick_edit_grade extends quick_edit_tablelike
         if ( $locked_grade || $locked_grade_item )  // check both grade and grade item
             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
 
-        $fullname = $lockicon . fullname($item);
+        if (isset($item->alternatename)) {
+            $fullname = $lockicon . $item->alternatename . ' (' . $item->firstname . ') ' . $item->lastname;
+        } else {
+            $fullname = $lockicon . fullname($item);
+        }
+
         $item->imagealt = $fullname;
 
         $line = array(

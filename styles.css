@@ -21,3 +21,7 @@
 #page-grade-report-quick_edit-index table.generaltable .cell {
    vertical-align: middle;
 }
+
+#page-grade-report-quick_edit-index div.generalbox h2 {
+   text-align: center;
+}

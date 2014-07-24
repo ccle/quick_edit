@@ -91,6 +91,7 @@ class grade_report_quick_edit extends grade_report {
 
         $this->screen = new $class($courseid, $itemid, $groupid);
 
+        // TODO update events to new model
         events_trigger($class . '_instantiated', $this->screen);
 
         // Load custom or predifined js
@@ -123,7 +124,7 @@ function grade_report_quick_edit_profilereport($course, $user) {
         require_once $CFG->dirroot . '/grade/report/user/lib.php';
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
 
     $can_use = (
         has_capability('gradereport/quick_edit:view', $context) and

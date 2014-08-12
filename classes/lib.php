@@ -217,7 +217,7 @@ abstract class quick_edit_screen {
         $event_data->post_data = $data;
         $event_data->instance = $this;
 
-        events_trigger(get_class($this) . '_edited', $event_data);
+        qe_events_trigger(get_class($this) . '_edited', $event_data);
 
         return $event_data->warnings;
     }
@@ -355,7 +355,7 @@ abstract class quick_edit_tablelike extends quick_edit_screen implements tabbabl
         $data->table = $table;
         $data->instance = $this;
 
-        events_trigger($underlying . '_table_built', $data);
+        qe_events_trigger($underlying . '_table_built', $data);
 
         $button_attr = array('class' => 'quick_edit_buttons submit');
         $button_html = implode(' ', $this->buttons());

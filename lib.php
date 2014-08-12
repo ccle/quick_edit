@@ -92,7 +92,7 @@ class grade_report_quick_edit extends grade_report {
         $this->screen = new $class($courseid, $itemid, $groupid);
 
         // TODO update events to new model
-        events_trigger($class . '_instantiated', $this->screen);
+        qe_events_trigger($class . '_instantiated', $this->screen);
 
         // Load custom or predifined js
         $this->screen->js();
@@ -146,5 +146,16 @@ function grade_report_quick_edit_profilereport($course, $user) {
 
         echo $OUTPUT->heading($report->screen->heading());
         echo $report->output();
+    }
+}
+
+/**
+ * qe_events_trigger hack for using legacy events without debug screaming at us
+ */
+function qe_events_trigger($eventname, $eventdata) {
+    if (function_exists('events_trigger_legacy')) {
+        events_trigger_legacy($eventname, $eventdata);
+    } else {
+        events_trigger($eventname, $eventdata);
     }
 }

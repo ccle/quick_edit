@@ -397,7 +397,7 @@ class quick_edit_finalgrade_ui extends quick_edit_grade_attribute_format impleme
         if ($errorstr) {
             $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, alternatename, lastname');
             $gradestr = new stdClass;
-            if (isset($user->alternatename)) {
+            if (!empty($user->alternatename)) {
                 $gradestr->username = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
             } else {
                 $gradestr->username = $user->firstname . ' ' . $user->lastname;

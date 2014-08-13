@@ -111,7 +111,7 @@ class quick_edit_user extends quick_edit_tablelike implements selectable_items {
     }
 
     public function heading() {
-            if (isset($this->item->alternatename)) {
+            if (!empty($this->item->alternatename)) {
                 return $this->item->alternatename . ' (' . $this->item->firstname . ') ' . $this->item->lastname;
             } else {
                 return fullname($this->item);

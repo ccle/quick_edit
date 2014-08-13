@@ -40,7 +40,7 @@ class anonymous_quick_edit_finalgrade extends quick_edit_finalgrade_ui {
             $user = $DB->get_record('user', $params, $mainuserfields);
 
             $number = $this->grade->anonymous_number();
-            if (isset($user->alternatename)) {
+            if (!empty($user->alternatename)) {
                 $displayname = $user->alternatename . ' \(' . $user->firstname . '\) ' . $user->lastname;
             } else {
                 $displayname = fullname($user);
@@ -97,7 +97,7 @@ class anonymous_quick_edit_adjust_value extends quick_edit_finalgrade_ui {
             $user = $DB->get_record('user', $params, 'id, firstname, alternatename, lastname');
 
             $obj = new stdClass;
-            if (isset($user->alternatename)) {
+            if (!empty($user->alternatename)) {
                 $obj->username = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
             } else {
                 $obj->username = $user->firstname . ' ' . $user->lastname;

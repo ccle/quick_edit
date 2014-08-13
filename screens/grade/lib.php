@@ -33,7 +33,7 @@ class quick_edit_grade extends quick_edit_tablelike
 
     public function options() {
         return array_map(function($user) { 
-            if (isset($user->alternatename)) {
+            if (!empty($user->alternatename)) {
                 return $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
             } else {
                 return fullname($user);
@@ -110,7 +110,7 @@ class quick_edit_grade extends quick_edit_tablelike
     public function original_headers() {
         $headers = array(
             '',
-            get_string('firstname') . ' / ' . get_string('lastname'),
+            get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
             get_string('feedback', 'grades')
@@ -134,7 +134,7 @@ class quick_edit_grade extends quick_edit_tablelike
         if ( $locked_grade || $locked_grade_item )  // check both grade and grade item
             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
 
-        if (isset($item->alternatename)) {
+        if (!empty($item->alternatename)) {
             $fullname = $lockicon . $item->alternatename . ' (' . $item->firstname . ') ' . $item->lastname;
         } else {
             $fullname = $lockicon . fullname($item);

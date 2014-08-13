@@ -112,7 +112,7 @@ class quick_edit_anonymous extends quick_edit_tablelike
         $grade = $this->fetch_grade_or_default($this->item, $user->id);
 
         if ($this->item->is_completed()) {
-            if (isset($user->alternatename)) {
+            if (!empty($user->alternatename)) {
                 $user->imagealt = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
             } else {
                 $user->imagealt = $user->firstname . ' ' . $user->lastname;

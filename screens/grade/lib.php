@@ -127,7 +127,11 @@ class quick_edit_grade extends quick_edit_tablelike
     public function original_headers() {
         $headers = array(
             '',
-            get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
+            // START UCLA MOD: CCLE-3970 - Install and evaluate LSU's Gradebook Improvements
+            // Making name header match our name formatting.
+            //get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
+            get_string('lastname') . ', ' . get_string('firstname'),
+            // END UCLA MOD: CCLE-3970
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
             get_string('feedback', 'grades')

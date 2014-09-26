@@ -181,7 +181,7 @@ class quick_edit_grade extends quick_edit_tablelike
             new moodle_url('/grade/report/quick_edit/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
-                'groupid' => $this->groupid,
+                'group' => $this->groupid,
                 'itemid' => $this->itemid,
                 'item' => 'grade'
             ))

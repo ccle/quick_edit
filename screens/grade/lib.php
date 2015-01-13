@@ -11,6 +11,8 @@ class quick_edit_grade extends quick_edit_tablelike
 
     private static $allow_categories;
 
+    private $suspendedusers = array();
+
     public static function allow_categories() {
         if (is_null(self::$allow_categories)) {
             self::$allow_categories = get_config('moodle', 'grade_overridecat');
@@ -82,7 +84,7 @@ class quick_edit_grade extends quick_edit_tablelike
             );
         }
 
-        global $DB;
+        global $CFG, $DB;
 
         $params = array(
             'id' => $this->itemid,
@@ -105,6 +107,21 @@ class quick_edit_grade extends quick_edit_tablelike
 
         $this->set_definition($this->original_definition());
         $this->set_headers($this->original_headers());
+
+        // Filter out suspended users.
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $this->context);
+        // Save suspended users for display later.
+        $this->suspendedusers = get_suspended_userids($this->context, true);
+        if ($showonlyactiveenrol) {
+            // User does not want to or cannot see suspended users.
+            foreach ($this->items as $userid => $item) {
+                if (in_array($userid, $this->suspendedusers)) {
+                    unset($this->items[$userid]);
+                }
+            }
+        }
     }
 
     public function original_headers() {
@@ -138,6 +155,16 @@ class quick_edit_grade extends quick_edit_tablelike
             $fullname = $lockicon . $item->alternatename . ' (' . $item->firstname . ') ' . $item->lastname;
         } else {
             $fullname = $lockicon . fullname($item);
+        }
+
+        // Display suspended user icon, if applicable.
+        if (in_array($item->id, $this->suspendedusers)) {
+            $suspendedstring = get_string('userenrolmentsuspended', 'grades');
+            $suspendedicon = ' ' . html_writer::empty_tag('img',
+                    array('src' => $OUTPUT->pix_url('i/enrolmentsuspended'),
+                        'title' => $suspendedstring, 'alt' => $suspendedstring,
+                        'class' => 'usersuspendedicon'));
+            $fullname .= $suspendedicon;
         }
 
         $item->imagealt = $fullname;

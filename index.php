@@ -74,6 +74,8 @@ $USER->grade_last_report[$course->id] = 'quick_edit';
 
 grade_regrade_final_grades($courseid);
 
+$PAGE->set_pagelayout('report');
+
 $report = new grade_report_quick_edit(
     $courseid, $gpr, $context,
     $itemtype, $itemid, $groupid
